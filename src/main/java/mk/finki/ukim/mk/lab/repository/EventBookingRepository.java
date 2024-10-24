@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public class EventBookingRepository {
     public List<EventBooking> eventBookings = null;
+    public List<EventBooking> all(){
+        return eventBookings;
+    }
     @PostConstruct
     public void init(){
         eventBookings = new ArrayList<>();

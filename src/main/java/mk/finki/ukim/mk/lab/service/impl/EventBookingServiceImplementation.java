@@ -7,6 +7,8 @@ import mk.finki.ukim.mk.lab.repository.EventRepository;
 import mk.finki.ukim.mk.lab.service.EventBookingService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventBookingServiceImplementation implements EventBookingService {
     public EventBookingServiceImplementation(EventBookingRepository eventBookingRepository) {
@@ -22,4 +24,10 @@ public class EventBookingServiceImplementation implements EventBookingService {
         Long tickets = Long.parseLong(String.valueOf(numberOfTickets));
         return eventBookingRepository.save(eventName, attendeeName, attendeeAddress, tickets);
     }
+
+    @Override
+    public List<EventBooking> listAll() {
+        return eventBookingRepository.all();
+    }
+
 }
