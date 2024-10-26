@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import mk.finki.ukim.mk.lab.model.Event;
 import mk.finki.ukim.mk.lab.service.EventService;
 import org.thymeleaf.context.WebContext;
@@ -14,6 +15,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet(name="event-list-servlet", urlPatterns = {"/list", "/browseEvents"})
 public class EventListServlet extends HttpServlet {
@@ -27,12 +29,24 @@ public class EventListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
         IWebExchange webExchange = JakartaServletWebApplication
                 .buildApplication(getServletContext())
                 .buildExchange(req, resp);
         WebContext webContext = new WebContext(webExchange);
+
         webContext.setVariable("events_list", service.listAll());
         webContext.setVariable("isEmpty", false);
+        String errorMessage = (session.getAttribute("errorMessage") != null) ? session.getAttribute("errorMessage").toString() : "";
+
+        if(errorMessage.isEmpty()){
+            webContext.setVariable("hasError", false);
+        }else{
+            webContext.setVariable("hasError", true);
+        }
+        session.removeAttribute("errorMessage");
+        webContext.setVariable("errorMessage", errorMessage);
         templateEngine.process("listEvents.html", webContext, resp.getWriter());
     }
 
@@ -60,11 +74,16 @@ public class EventListServlet extends HttpServlet {
             webContext.setVariable("empty", empty);
             templateEngine.process("listEvents.html", webContext, resp.getWriter());
         }else{
-            String eventName = req.getParameter("event-name");
-            String attendeeName = req.getParameter("attendeeName");
+            String eventName = req.getParameter("event-name") == null ? "" : req.getParameter("event-name");
+            String attendeeName = req.getParameter("attendeeName") == null ? "" : req.getParameter("attendeeName");
             String attendeeAddress = req.getRemoteAddr();
 
-            Long tickets = Long.parseLong(req.getParameter("numTickets"));
+            String ticketsParam = req.getParameter("numTickets");
+            Long tickets = 0L;
+
+            if (ticketsParam != null && !ticketsParam.isEmpty()) {
+                tickets = Long.parseLong(ticketsParam);
+            }
 
 
             req.getSession().setAttribute("event-name", eventName);

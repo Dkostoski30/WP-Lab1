@@ -18,7 +18,7 @@ public class EventBookingServiceImplementation implements EventBookingService {
     public EventBookingRepository eventBookingRepository;
     @Override
     public EventBooking placeBooking(String eventName, String attendeeName, String attendeeAddress, int numberOfTickets) {
-        if(eventName.isEmpty() || attendeeName.isBlank() || attendeeName.isBlank()){
+        if(eventName.isEmpty() || attendeeName.isBlank()){
             throw new IllegalArgumentException("One or more arguments are not valid");
         }
         Long tickets = Long.parseLong(String.valueOf(numberOfTickets));

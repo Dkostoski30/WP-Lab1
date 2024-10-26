@@ -38,7 +38,13 @@ public class EventBookingServlet extends HttpServlet {
         String attendeeAddress = session.getAttribute("attendee-address").toString();
         String tickets = session.getAttribute("ticket-number").toString();
 
-        service.placeBooking(eventName, attendeeName, attendeeAddress, Integer.parseInt(tickets));
+        try{
+            service.placeBooking(eventName, attendeeName, attendeeAddress, Integer.parseInt(tickets));
+        }catch (RuntimeException e){
+            String errorMessage = e.getMessage();
+            session.setAttribute("errorMessage", errorMessage);
+            resp.sendRedirect("/list");
+        }
 
         webContext.setVariable("booking_list", service.listAll());
         templateEngine.process("bookingConfirmation.html", webContext, resp.getWriter());
