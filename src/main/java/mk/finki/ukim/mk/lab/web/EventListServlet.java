@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-@WebServlet(name="event-list-servlet", urlPatterns = {"/list", "/browseEvents"})
+@WebServlet(name="event-list-servlet", urlPatterns = {"/list"})
 public class EventListServlet extends HttpServlet {
     private final SpringTemplateEngine templateEngine;
     private final EventService service;
@@ -30,7 +30,6 @@ public class EventListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-
         IWebExchange webExchange = JakartaServletWebApplication
                 .buildApplication(getServletContext())
                 .buildExchange(req, resp);
@@ -52,9 +51,8 @@ public class EventListServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getServletPath();
-
-        if(path.equals("/browseEvents")){
+        String query = req.getQueryString();
+        if(query.contains("form=2")){
             String text = req.getParameter("text");
             int minRating;
             if(!req.getParameter("rating").isEmpty()){
@@ -69,23 +67,17 @@ public class EventListServlet extends HttpServlet {
                     .stream()
                     .filter(event -> event.getPopularityScore() > (double) minRating).toList();
             WebContext webContext = new WebContext(webExchange);
-            boolean empty = events.isEmpty();
             webContext.setVariable("events_list", events);
-            webContext.setVariable("empty", empty);
             templateEngine.process("listEvents.html", webContext, resp.getWriter());
         }else{
             String eventName = req.getParameter("event-name") == null ? "" : req.getParameter("event-name");
             String attendeeName = req.getParameter("attendeeName") == null ? "" : req.getParameter("attendeeName");
             String attendeeAddress = req.getRemoteAddr();
-
             String ticketsParam = req.getParameter("numTickets");
-            Long tickets = 0L;
-
+            long tickets = 0L;
             if (ticketsParam != null && !ticketsParam.isEmpty()) {
                 tickets = Long.parseLong(ticketsParam);
             }
-
-
             req.getSession().setAttribute("event-name", eventName);
             req.getSession().setAttribute("attendee-name", attendeeName);
             req.getSession().setAttribute("attendee-address", attendeeAddress);
