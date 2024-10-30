@@ -17,6 +17,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "event-booking-servlet", urlPatterns = "/eventBooking")
 public class EventBookingServlet extends HttpServlet {
@@ -35,6 +36,9 @@ public class EventBookingServlet extends HttpServlet {
                 .buildExchange(req, resp);
         WebContext webContext = new WebContext(webExchange);
         HttpSession session = req.getSession();
+        if(session.getAttribute("username") == null){
+            resp.sendRedirect("/login");
+        }
         String eventName = session.getAttribute("event-name").toString();
         String attendeeName = session.getAttribute("attendee-name").toString();
         String attendeeAddress = session.getAttribute("attendee-address").toString();
@@ -42,14 +46,18 @@ public class EventBookingServlet extends HttpServlet {
         EventBooking booking = null;
         try{
             booking = service.placeBooking(eventName, attendeeName, attendeeAddress, Integer.parseInt(tickets));
-            //bookings.add(booking);
         }catch (RuntimeException e){
             String errorMessage = e.getMessage();
             session.setAttribute("errorMessage", errorMessage);
             resp.sendRedirect("/list");
         }
-
+        String username = session.getAttribute("username").toString();
+        List<EventBooking> bookings = service.listAll()
+                .stream()
+                .filter(b -> b.getAttendeeName().equals(username))
+                .collect(Collectors.toList());
         webContext.setVariable("booking", booking);
+        webContext.setVariable("booking_list", bookings);
         templateEngine.process("bookingConfirmation.html", webContext, resp.getWriter());
     }
 

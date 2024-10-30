@@ -34,6 +34,14 @@ public class EventListServlet extends HttpServlet {
                 .buildApplication(getServletContext())
                 .buildExchange(req, resp);
         WebContext webContext = new WebContext(webExchange);
+        //dopolnitelno
+        String username = "";
+        if(session.getAttribute("username") == null){
+            resp.sendRedirect("/login");
+        }else{
+            username = session.getAttribute("username").toString();
+        }
+        //dopolnitelno
 
         webContext.setVariable("events_list", service.listAll());
         webContext.setVariable("isEmpty", false);
@@ -52,6 +60,7 @@ public class EventListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String query = req.getQueryString();
+        HttpSession session = req.getSession();
         if(query.contains("form=2")){
             String text = req.getParameter("text");
             int minRating;
@@ -71,7 +80,7 @@ public class EventListServlet extends HttpServlet {
             templateEngine.process("listEvents.html", webContext, resp.getWriter());
         }else{
             String eventName = req.getParameter("event-name") == null ? "" : req.getParameter("event-name");
-            String attendeeName = req.getParameter("attendeeName") == null ? "" : req.getParameter("attendeeName");
+            String attendeeName = session.getAttribute("username").toString();
             String attendeeAddress = req.getRemoteAddr();
             String ticketsParam = req.getParameter("numTickets");
             long tickets = 0L;

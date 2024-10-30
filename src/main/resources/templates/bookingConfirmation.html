@@ -45,6 +45,12 @@
     </tr>
   </table>
 </section>
+<h4>All bookings</h4>
+<ul>
+  <li th:each="booking: ${booking_list}">
+    <p th:text="'Name ' + ${booking.attendeeName} + ', Event: ' + ${booking.getEventName()}"></p>
+  </li>
+</ul>
 <footer>
   <h4>Wanna book another event?</h4>
   <a href="/list">Go back</a>
