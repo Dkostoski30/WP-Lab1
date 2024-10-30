@@ -15,6 +15,8 @@ import org.thymeleaf.web.IWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "event-booking-servlet", urlPatterns = "/eventBooking")
 public class EventBookingServlet extends HttpServlet {
@@ -37,16 +39,17 @@ public class EventBookingServlet extends HttpServlet {
         String attendeeName = session.getAttribute("attendee-name").toString();
         String attendeeAddress = session.getAttribute("attendee-address").toString();
         String tickets = session.getAttribute("ticket-number").toString();
-
+        EventBooking booking = null;
         try{
-            service.placeBooking(eventName, attendeeName, attendeeAddress, Integer.parseInt(tickets));
+            booking = service.placeBooking(eventName, attendeeName, attendeeAddress, Integer.parseInt(tickets));
+            //bookings.add(booking);
         }catch (RuntimeException e){
             String errorMessage = e.getMessage();
             session.setAttribute("errorMessage", errorMessage);
             resp.sendRedirect("/list");
         }
 
-        webContext.setVariable("booking_list", service.listAll());
+        webContext.setVariable("booking", booking);
         templateEngine.process("bookingConfirmation.html", webContext, resp.getWriter());
     }
 

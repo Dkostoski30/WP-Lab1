@@ -82,7 +82,6 @@ public class EventListServlet extends HttpServlet {
             req.getSession().setAttribute("attendee-name", attendeeName);
             req.getSession().setAttribute("attendee-address", attendeeAddress);
             req.getSession().setAttribute("ticket-number", tickets);
-
             resp.sendRedirect("/eventBooking");
         }
     }
