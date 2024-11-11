@@ -6,6 +6,7 @@ import mk.finki.ukim.mk.lab.service.EventService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventServiceImplementation implements EventService {
@@ -23,5 +24,25 @@ public class EventServiceImplementation implements EventService {
     @Override
     public List<Event> searchEvents(String text) {
         return eventRepository.searchEvents(text);
+    }
+
+    @Override
+    public void deleteEvent(Long id) {
+        eventRepository.deleteEvent(id);
+    }
+
+    @Override
+    public Event createEvent(Event event) {
+        return eventRepository.saveEvent(event);
+    }
+
+    @Override
+    public Event updateEvent(Event event) {
+        return eventRepository.saveEvent(event);
+    }
+
+    @Override
+    public Optional<Event> getEvent(Long id) {
+        return eventRepository.findEvent(id);
     }
 }

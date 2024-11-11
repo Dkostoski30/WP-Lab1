@@ -5,6 +5,7 @@ import mk.finki.ukim.mk.lab.data.DataHolder;
 import mk.finki.ukim.mk.lab.model.Event;
 import org.springframework.stereotype.Repository;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +24,18 @@ public class EventRepository {
                 .filter(event -> event.getName().contains(text) || event.getDescription().contains(text))
                 .toList();
     }
+    public Optional<Event> findEvent(Long id) {
+        return DataHolder.events
+                .stream().filter(event -> event.getID().equals(id)).findFirst();
+    }
 
+    public void deleteEvent(Long id) {
+        DataHolder.events.removeIf(event -> event.getID().equals(id));
+    }
+
+    public Event saveEvent(Event event) {
+        deleteEvent(event.getID());
+        DataHolder.events.add(event);
+        return event;
+    }
 }
