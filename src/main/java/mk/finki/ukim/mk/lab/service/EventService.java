@@ -11,7 +11,7 @@ public interface EventService {
     List<Event> listAll();
     List<Event> searchEvents(String text);
     void deleteEvent(Long id);
-    Event createEvent(Event event);
-    Event updateEvent(Long id, Event event);
+    Event addEvent(Event event);
+    Event addEvent(Event event, Long ID);
     Optional<Event> getEvent(Long id);
 }

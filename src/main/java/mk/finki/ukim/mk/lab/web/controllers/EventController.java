@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -33,14 +34,6 @@ public class EventController {
         }
         return "listEvents";
     }
-
-    @GetMapping(path = "/create")
-    public String createEvent(Model model){
-        List<Location> locations = locationService.findAll();
-        model.addAttribute("locations", locations);
-
-        return "createEvent";
-    }
     @PostMapping(path = "/create")
     public String createEvent(@RequestParam String name,
                               @RequestParam String description,
@@ -48,9 +41,31 @@ public class EventController {
                               @RequestParam String locationId,
                               Model model){
         Location location = locationService.findById(Long.parseLong(locationId)).orElse(null);
-        eventService.createEvent(new Event(name, description, Double.parseDouble(popularityScore), location));
+        eventService.addEvent(new Event(name, description, Double.parseDouble(popularityScore), location));
         return "redirect:/events";
     }
+
+
+    @GetMapping(path = "/add-form")
+    public String getAddEventPage(Model model){
+        Event event = new Event("", "", 0.0, null);
+        model.addAttribute("event", event);
+        model.addAttribute("locations", locationService.findAll());
+        return "add-event";
+    }
+    @PostMapping(path = "/add/{id}")
+    public String addEvent(@PathVariable Long id,
+                           @RequestParam String name,
+                           @RequestParam String description,
+                           @RequestParam Double popularityScore,
+                           @RequestParam Long locationId
+                           ){
+        Event new_event = new Event(id, name, description, popularityScore, locationService.findById(locationId).orElse(null));
+        eventService.addEvent(new_event, id);
+        return "redirect:/events";
+    }
+
+
     @GetMapping(path = "/edit/{id}")
     public String getEditPage(@PathVariable Long id, Model model){
         Optional<Event> event = eventService.getEvent(id);
@@ -58,7 +73,7 @@ public class EventController {
             model.addAttribute("event", event.get());
             List<Location> locations = locationService.findAll();
             model.addAttribute("locations", locations);
-            return "editEvent";
+            return "add-event";
         }else{
 
             model.addAttribute("errorMessage", "Event not found");
@@ -77,7 +92,7 @@ public class EventController {
         if(op_event.isPresent()){
             Optional<Location> op_location = locationService.findById(locationId);
             Event new_event = new Event(name, description, popularityScore, op_location.orElse(null));
-            eventService.updateEvent(id, new_event);
+            eventService.addEvent(new_event, id);
             return "redirect:/events";
         }else{
             model.addAttribute("errorMessage", "Event not found");
@@ -89,4 +104,17 @@ public class EventController {
         eventService.deleteEvent(id);
         return "redirect:/events";
     }
+    @PostMapping(path = "/search")
+    public String searchEvents(@RequestParam(required = false) String query,
+                               @RequestParam(required = false) Double rating,
+                               Model model){
+        double minRating;
+        System.out.println(query);
+        minRating = Objects.requireNonNullElse(rating, 0.0);
+        List<Event> events = eventService.searchEvents(query).stream().filter(event -> event.getPopularityScore() > minRating).toList();
+        model.addAttribute("events_list", events);
+        model.addAttribute("locations", locationService.findAll());
+        return "listEvents";
+    }
+
 }

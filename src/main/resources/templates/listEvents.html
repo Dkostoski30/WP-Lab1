@@ -88,7 +88,7 @@
                 })
                     .then(response => {
                         if (response.ok) {
-                            window.location.href = '/events'; // Redirect after successful delete
+                            window.location.href = '/events';
                         } else {
                             alert('Failed to delete the event.');
                         }
@@ -106,10 +106,10 @@
     <h1>Welcome to our Event Booking App</h1>
 </header>
 <main>
-    <form action="/list?form=1" method="post">
+    <form action="/eventBooking/book-event" method="post">
         <h2>Choose an event:</h2>
         <div th:each="event: ${events_list}" class="event-card">
-            <input type="radio" name="event-name" th:value="${event.getName()}" required style="margin-right: 10px;">
+            <input type="radio" name="event_name" th:value="${event.getName()}" required style="margin-right: 10px;">
             <div class="event-info">
                 <label th:text="'Name: ' + ${event.getName()} + ', Description: ' + ${event.getDescription()} + ', Popularity: ' + ${event.getPopularityScore()} + ', Location: ' + ${event.getLocation().getName()}"></label>
             </div>
@@ -123,17 +123,18 @@
         </div>
         <h2>Choose number of tickets:</h2>
         <input type="number" name="numTickets" min="1" max="10" required><br/>
+        <input type="text" name="name" placeholder="Enter your name" required>
         <div style="color: red" th:if="${hasError}" th:text="${errorMessage}"></div>
         <input type="submit" value="Submit">
     </form>
 
-    <a type="button" href="/logout">Logout</a>
-    <a type="button" href="/events/create">Create a new event</a>
+    <!--<a type="button" href="/logout">Logout</a>-->
+    <a type="button" href="/events/add-form">Create a new event</a>
     <h3>Search Events</h3>
 
-    <form action="/list?form=2" method="post">
-        <label for="text">Event name:</label>
-        <input type="text" id="text" name="text" placeholder="Enter event">
+    <form action="/events/search" method="post">
+        <label for="query">Event name:</label>
+        <input type="text" id="query" name="query" placeholder="Enter event">
         <label for="rating">Min rating:</label>
         <input type="number" id="rating" name="rating" min="1" max="10" placeholder="Enter minimum rating">
         <button type="submit">Search</button>

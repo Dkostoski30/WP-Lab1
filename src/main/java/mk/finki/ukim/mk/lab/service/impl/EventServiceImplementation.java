@@ -32,12 +32,12 @@ public class EventServiceImplementation implements EventService {
     }
 
     @Override
-    public Event createEvent(Event event) {
+    public Event addEvent(Event event){
         return eventRepository.createEvent(event);
     }
 
     @Override
-    public Event updateEvent(Long id, Event event) {
+    public Event addEvent(Event event, Long id) {
         return eventRepository.update(id, event);
     }
 

@@ -4,6 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 @Getter
 public class Event {
+    public Event(Long ID, String name, String description, double popularityScore, Location location) {
+        this.ID = ID;
+        this.name = name;
+        this.description = description;
+        this.popularityScore = popularityScore;
+        this.location = location;
+    }
+
     public Event(String name, String description, double popularityScore, Location location) {
         this.ID = (long)(Math.random() * 1000);
         this.name = name;
