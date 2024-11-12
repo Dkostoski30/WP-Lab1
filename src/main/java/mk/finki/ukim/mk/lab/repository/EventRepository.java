@@ -32,9 +32,12 @@ public class EventRepository {
     public void deleteEvent(Long id) {
         DataHolder.events.removeIf(event -> event.getID().equals(id));
     }
-
-    public Event saveEvent(Event event) {
-        deleteEvent(event.getID());
+    public Event createEvent(Event event) {
+        DataHolder.events.add(event);
+        return event;
+    }
+    public Event update(Long ID, Event event) {
+        deleteEvent(ID);
         DataHolder.events.add(event);
         return event;
     }

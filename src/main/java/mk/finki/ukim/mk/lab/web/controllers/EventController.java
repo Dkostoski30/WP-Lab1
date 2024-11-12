@@ -62,7 +62,31 @@ public class EventController {
         }else{
 
             model.addAttribute("errorMessage", "Event not found");
+            return "errorPage";
         }
-        return "errorPage";
+    }
+    @PostMapping(path = "/edit/{id}")
+    public String updateEvent(@PathVariable Long id,
+                              @RequestParam String name,
+                              @RequestParam String description,
+                              @RequestParam Double popularityScore,
+                              @RequestParam Long locationId,
+                              Model model){
+
+        Optional<Event> op_event = eventService.getEvent(id);
+        if(op_event.isPresent()){
+            Optional<Location> op_location = locationService.findById(locationId);
+            Event new_event = new Event(name, description, popularityScore, op_location.orElse(null));
+            eventService.updateEvent(id, new_event);
+            return "redirect:/events";
+        }else{
+            model.addAttribute("errorMessage", "Event not found");
+            return "errorPage";
+        }
+    }
+    @PostMapping(path = "/delete/{id}")
+    public String deleteEvent(@PathVariable Long id){
+        eventService.deleteEvent(id);
+        return "redirect:/events";
     }
 }
