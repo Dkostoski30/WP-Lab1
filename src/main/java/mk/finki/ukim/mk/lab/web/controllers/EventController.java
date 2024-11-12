@@ -7,10 +7,7 @@ import mk.finki.ukim.mk.lab.service.EventService;
 import mk.finki.ukim.mk.lab.service.LocationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,10 +38,19 @@ public class EventController {
     public String createEvent(Model model){
         List<Location> locations = locationService.findAll();
         model.addAttribute("locations", locations);
-        /*model.addAttribute("event", new Event());*/
+
         return "createEvent";
     }
-
+    @PostMapping(path = "/create")
+    public String createEvent(@RequestParam String name,
+                              @RequestParam String description,
+                              @RequestParam String popularityScore,
+                              @RequestParam String locationId,
+                              Model model){
+        Location location = locationService.findById(Long.parseLong(locationId)).orElse(null);
+        eventService.createEvent(new Event(name, description, Double.parseDouble(popularityScore), location));
+        return "redirect:/events";
+    }
     @GetMapping(path = "/edit/{id}")
     public String getEditPage(@PathVariable Long id, Model model){
         Optional<Event> event = eventService.getEvent(id);
