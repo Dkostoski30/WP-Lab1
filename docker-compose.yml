@@ -1,0 +1,16 @@
+version: "3"
+services:
+  wp-db:
+    # Use the Docker Image postgres. This will pull the newest release.
+    image: "postgres"
+    # Give the container the name wp2020_eshop. You can change this to something else.
+    container_name: wp2020_eshop
+    # Set up the username, password, and database name. You can change these values.
+    environment:
+      - POSTGRES_USER=wp
+      - POSTGRES_PASSWORD=wp123
+      - POSTGRES_DB=events
+    # Map port 54320 (localhost) to port 5432 on the container.
+    ports:
+      - "5432:5432"
+    # Optionally, specify a volume to persist data (e.g., `volumes:` section can be added here).

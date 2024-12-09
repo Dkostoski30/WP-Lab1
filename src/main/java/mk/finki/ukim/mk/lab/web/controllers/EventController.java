@@ -28,8 +28,11 @@ public class EventController {
         if(error != null){
             model.addAttribute("hasError", true);
             model.addAttribute("errorMessage", error);
+            return "errorPage";
         }else{
             List<Event> events = eventService.listAll();
+            List<Location> locations = locationService.findAll();
+            model.addAttribute("locations", locations);
             model.addAttribute("events_list", events);
         }
         return "listEvents";
@@ -48,7 +51,7 @@ public class EventController {
 
     @GetMapping(path = "/add-form")
     public String getAddEventPage(Model model){
-        Event event = new Event("", "", 0.0, null);
+        Event event = new Event();
         model.addAttribute("event", event);
         model.addAttribute("locations", locationService.findAll());
         return "add-event";
@@ -116,5 +119,22 @@ public class EventController {
         model.addAttribute("locations", locationService.findAll());
         return "listEvents";
     }
-
+    @PostMapping(path = "/searchLocation")
+    public String searchLocation(
+            @RequestParam Long locationId,
+            Model model
+            ){
+        Optional<Location> op_location = locationService.findById(locationId);
+        if(op_location.isPresent()){
+            /*Location location = op_location.get();*/
+            List<Event> events = eventService.searchByLocationID(locationId);
+            List<Location> locations = locationService.findAll();
+            model.addAttribute("locations", locations);
+            model.addAttribute("events_list", events);
+            return "listEvents";
+        }else{
+            model.addAttribute("errorMessage", "Location not found");
+            return "errorPage";
+        }
+    }
 }

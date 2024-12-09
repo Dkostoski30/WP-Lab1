@@ -10,8 +10,10 @@ import java.util.Optional;
 public interface EventService {
     List<Event> listAll();
     List<Event> searchEvents(String text);
+    List<Event> searchByLocationID(Long locationID);
     void deleteEvent(Long id);
     Event addEvent(Event event);
     Event addEvent(Event event, Long ID);
     Optional<Event> getEvent(Long id);
+
 }

@@ -139,6 +139,22 @@
         <input type="number" id="rating" name="rating" min="1" max="10" placeholder="Enter minimum rating">
         <button type="submit">Search</button>
     </form>
+    <h3>Search Events by location</h3>
+
+    <form action="/events/searchLocation" method="post">
+        <div>
+            <label for="locationId">Location:</label>
+            <select id="locationId" name="locationId" required>
+                <option value="" disabled>Select a location</option>
+                <option th:each="location : ${locations}"
+                        th:value="${location.getID()}"
+                        th:text="${location.getName()}"
+                >
+                </option>
+            </select>
+        </div>
+        <button type="submit">Search</button>
+    </form>
 </main>
 </body>
 </html>

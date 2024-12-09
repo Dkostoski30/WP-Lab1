@@ -23,26 +23,34 @@ public class EventServiceImplementation implements EventService {
 
     @Override
     public List<Event> searchEvents(String text) {
-        return eventRepository.searchEvents(text);
+        return eventRepository.findAll().stream()
+                .filter(event -> event.getName().contains(text) || event.getDescription().contains(text))
+                .toList();
     }
 
     @Override
     public void deleteEvent(Long id) {
-        eventRepository.deleteEvent(id);
+        eventRepository.deleteById(id);
     }
 
     @Override
     public Event addEvent(Event event){
-        return eventRepository.createEvent(event);
+        return eventRepository.save(event);
+    }
+
+    @Override
+    public List<Event> searchByLocationID(Long locationID) {
+        return eventRepository.findAllByLocation_Id(locationID);
     }
 
     @Override
     public Event addEvent(Event event, Long id) {
-        return eventRepository.update(id, event);
+        event.setId(id);
+        return eventRepository.save(event);
     }
 
     @Override
     public Optional<Event> getEvent(Long id) {
-        return eventRepository.findEvent(id);
+        return eventRepository.findById(id);
     }
 }

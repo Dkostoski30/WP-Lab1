@@ -23,6 +23,6 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Optional<Location> findById(Long id) {
-        return locationRepository.findAll().stream().filter(location -> location.getID().equals(id)).findFirst();
+        return locationRepository.findById(id);
     }
 }
