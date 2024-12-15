@@ -5,6 +5,7 @@ import mk.finki.ukim.mk.lab.model.Event;
 import mk.finki.ukim.mk.lab.model.Location;
 import mk.finki.ukim.mk.lab.service.EventService;
 import mk.finki.ukim.mk.lab.service.LocationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class EventController {
         return "redirect:/events";
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/add-form")
     public String getAddEventPage(Model model){
         Event event = new Event();
@@ -56,6 +57,7 @@ public class EventController {
         model.addAttribute("locations", locationService.findAll());
         return "add-event";
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add/{id}")
     public String addEvent(@PathVariable Long id,
                            @RequestParam String name,
@@ -68,7 +70,7 @@ public class EventController {
         return "redirect:/events";
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/edit/{id}")
     public String getEditPage(@PathVariable Long id, Model model){
         Optional<Event> event = eventService.getEvent(id);
@@ -83,6 +85,7 @@ public class EventController {
             return "errorPage";
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/edit/{id}")
     public String updateEvent(@PathVariable Long id,
                               @RequestParam String name,
@@ -102,6 +105,7 @@ public class EventController {
             return "errorPage";
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/delete/{id}")
     public String deleteEvent(@PathVariable Long id){
         eventService.deleteEvent(id);

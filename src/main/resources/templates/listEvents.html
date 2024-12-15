@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="utf-8">
     <title>Event Booking Page - Welcome and Choose an Event</title>
@@ -113,9 +113,9 @@
             <div class="event-info">
                 <label th:text="'Name: ' + ${event.getName()} + ', Description: ' + ${event.getDescription()} + ', Popularity: ' + ${event.getPopularityScore()} + ', Location: ' + ${event.getLocation().getName()}"></label>
             </div>
-            <div class="button-group">
-                <a type="button" th:href="@{/events/edit/{id}(id=${event.getID()})}" class="edit">Edit</a>
-                <a type="button" th:onclick="|deleteEvent(${event.getID()})|" class="delete">Delete</a>
+            <div class="button-group" >
+                <a sec:authorize="hasRole('ADMIN')" type="button" th:href="@{/events/edit/{id}(id=${event.getID()})}" class="edit">Edit</a>
+                <a sec:authorize="hasRole('ADMIN')" type="button" th:onclick="|deleteEvent(${event.getID()})|" class="delete">Delete</a>
             </div>
         </div>
         <div th:if="${events_list.isEmpty()}">
